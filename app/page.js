@@ -13,9 +13,7 @@ function Home() {
   return (
     <div>
       <Header onSearchTermChange={handleSearchTermChange} />
-      <Main searchTerm={searchTerm}/>
-      {/* Opcional: Puedes utilizar el searchTerm en tu componente Main también, si es necesario */}
-      {/* <Main searchTerm={searchTerm} /> */}
+      <Main searchTerm={searchTerm} onSearchTermChange={handleSearchTermChange} />
     </div>
   );
 }
