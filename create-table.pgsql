@@ -83,6 +83,23 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION addWordAndRelationship(relatedWordId INTEGER, word VARCHAR, language VARCHAR)
+RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+    new_word_id INTEGER;
+BEGIN
+    -- Agregando la nueva palabra a la tabla Words
+    CALL addWord(word, language);
+
+    -- Recuperando el ID de la nueva palabra agregada
+    SELECT id INTO new_word_id FROM Words WHERE word = word AND language = language;
+
+    -- Creando una nueva relación en la tabla WordRelationships
+    CALL addWordRelationship(new_word_id, relatedWordId);
+END;
+$$;
+
+
 -- Creación de la función addError
 CREATE OR REPLACE FUNCTION addError(p_word VARCHAR, p_wordId INTEGER)
 RETURNS void LANGUAGE plpgsql AS $$

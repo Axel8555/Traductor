@@ -31,6 +31,15 @@ main {
   align-items: center;
   justify-content: center;
 }
+
+button {
+  margin-left: 0.5rem;
+  background-color: #3483d3;
+  color: #F3F4F6;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
 /* Header.module.css */
 .header {
   display: flex;
