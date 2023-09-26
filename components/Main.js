@@ -4,9 +4,12 @@ function Main({ searchTerm, onSearchTermChange }) {
   const [response, setResponse] = useState(null);
   const [errorResponse, setErrorResponse] = useState(null);
   const [translationResponse, setTranslationResponse] = useState(null);
+  const [isFetching, setIsFetching] = useState(false); // Nuevo estado para controlar las solicitudes
 
   useEffect(() => {
     if (searchTerm) {
+      setIsFetching(true); // Inicia la solicitud
+      // Realiza la solicitud a 'lookForWord'
       fetch('http://localhost:5000/lookForWord', {
         method: 'POST',
         headers: {
@@ -17,16 +20,22 @@ function Main({ searchTerm, onSearchTermChange }) {
       .then(response => response.json())
       .then(data => {
         setResponse(data);
-        
+        setIsFetching(false); // Finaliza la solicitud
+        // Restablece errorResponse y translationResponse
+        setErrorResponse(null);
+        setTranslationResponse(null);
       })
       .catch(error => {
         console.error('Error:', error);
+        setIsFetching(false); // Finaliza la solicitud en caso de error
       });
     }
   }, [searchTerm]);
 
   const addError = (suggestion) => {
     if (suggestion) {
+      setErrorResponse(null); // Restablece errorResponse
+      // Realiza la solicitud para agregar un error
       fetch('http://localhost:5000/addError', {
         method: 'POST',
         headers: {
@@ -47,6 +56,8 @@ function Main({ searchTerm, onSearchTermChange }) {
 
   const addTranslation = (word_b) => {
     if (word_b) {
+      setTranslationResponse(null); // Restablece translationResponse
+      // Realiza la solicitud para agregar una traducción
       fetch('http://localhost:5000/addTranslation', {
         method: 'POST',
         headers: {
@@ -83,7 +94,7 @@ function Main({ searchTerm, onSearchTermChange }) {
       )}
     </div>
   );
-  
+
   const renderForm = () => (
     <form className='genericContainer' onSubmit={(e) => {
       e.preventDefault();
@@ -101,7 +112,7 @@ function Main({ searchTerm, onSearchTermChange }) {
       </label>
     </form>
   );
-  
+
   const renderResponse = () => {
     if (response?.words) {
       return (
@@ -138,10 +149,18 @@ function Main({ searchTerm, onSearchTermChange }) {
       }
     }
   };
-  
+
   return (
     <main>
-      {renderResponse()}
+      {isFetching && <p>Cargando...</p>}
+      {!isFetching && renderResponse()}
+      {!isFetching && errorResponse && <p>Respuesta del servidor: {JSON.stringify(errorResponse)}</p>}
+      {!isFetching && translationResponse && (
+        <div className='genericContainer'>
+          <h2>Respuesta de la traducción:</h2>
+          <pre>{JSON.stringify(translationResponse, null, 2)}</pre>
+        </div>
+      )}
     </main>
   );
 }
