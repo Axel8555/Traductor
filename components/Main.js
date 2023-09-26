@@ -4,7 +4,8 @@ function Main({ searchTerm, onSearchTermChange }) {
   const [response, setResponse] = useState(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [errorResponse, setErrorResponse] = useState(null);
-
+  const [showForm, setShowForm] = useState(true); // Nuevo estado para controlar la visibilidad del formulario
+  const [translationResponse, setTranslationResponse] = useState(null); // Nuevo estado para almacenar la respuesta de la traducción
   useEffect(() => {
     if (searchTerm) {
       fetch('http://localhost:5000/lookForWord', {
@@ -46,56 +47,84 @@ function Main({ searchTerm, onSearchTermChange }) {
         });
     }
   };
+  
+  // Función para manejar la solicitud de agregar un error
+
+  const addTranslation = (word_b) => {
+    if (word_b) {
+      fetch('http://localhost:5000/addTranslation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          word_a: searchTerm,
+          language_a: "es-MX",
+          word_b: word_b,
+          language_b: "en-US",
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setTranslationResponse(data); // Almacenar la respuesta
+          setShowForm(false); // Ocultar el formulario
+          onSearchTermChange(word_b);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  };
 
  // Función para renderizar las respuestas de error
-const renderError = (errorType) => {
+ const renderError = (errorType) => {
   const handleAddWordSubmit = (e) => {
     e.preventDefault();
-    // Aquí puedes manejar la lógica para agregar una nueva palabra
-    // Accede a los valores de los inputs usando e.target.language y e.target.word
     const word_b = e.target.word_b.value;
-
-    // Realiza una solicitud para agregar la palabra
-    // Por ejemplo, podrías llamar a una función addNewWord(newLanguage, newWord)
-    // Asegúrate de implementar addNewWord en tu aplicación
-
-    // Limpia los campos del formulario después de agregar la palabra
     e.target.word_b.value = '';
   };
 
   return (
-    <div>
-      <h1>Quisiste decir:</h1>
-      {response.suggestions.map((suggestion, index) => (
-        <button key={index} onClick={() => { setSelectedSuggestion(suggestion); addError(suggestion); }}>
-          {suggestion.word}
-        </button>
-      ))}
-      {/*selectedSuggestion && (
+    <> 
+      {response.suggestions.length > 0 && (
         <div>
-          <p>{JSON.stringify(selectedSuggestion)}</p>
-        </div>
-      )*/}
-      {errorResponse && (
-        <div>
-          <p>Respuesta del servidor: {JSON.stringify(errorResponse)}</p>
+          <h1>Quisiste decir:</h1>
+          {response.suggestions.map((suggestion, index) => (
+            <button key={index} onClick={() => { setSelectedSuggestion(suggestion); addError(suggestion); }}>
+              {suggestion.word}
+            </button>
+          ))}
+          {errorResponse && (
+            <p>Respuesta del servidor: {JSON.stringify(errorResponse)}</p>
+          )}
         </div>
       )}
-
-      {/* Formulario para agregar palabra */}
-      <form onSubmit={handleAddWordSubmit}>
-        <h2>Agregar palabra: "{searchTerm}", es-MX</h2>
-        <label>
-          Traducción en-US:
-          <div >
-            <input type="text" name="word_b" />
-          </div>
-        </label>
-        <button type="submit">Enviar</button>
-      </form>
-    </div>
+      {showForm ? (
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          const word_b = e.target.word_b.value;
+          addTranslation(word_b);
+          e.target.word_b.value = '';
+        }}>
+          <h2>Agregar palabra: "{searchTerm}", es-MX</h2>
+          <label>
+            Traducción en-US:
+            <div>
+              <input type="text" name="word_b" />
+            </div>
+          </label>
+          <button type="submit">Enviar</button>
+        </form>
+      ) : (
+        <div>
+          <h2>Respuesta de la traducción:</h2>
+          <pre>{JSON.stringify(translationResponse, null, 2)}</pre>
+        </div>
+      )}
+    </>
   );
 };
+
 
 
   // Función para renderizar la respuesta

@@ -89,15 +89,37 @@ DECLARE
     new_word_id INTEGER;
 BEGIN
     -- Agregando la nueva palabra a la tabla Words
-    CALL addWord(word, language);
+    PERFORM addWord(word, language);
 
     -- Recuperando el ID de la nueva palabra agregada
     SELECT id INTO new_word_id FROM Words WHERE word = word AND language = language;
 
     -- Creando una nueva relación en la tabla WordRelationships
-    CALL addWordRelationship(new_word_id, relatedWordId);
+    PERFORM addWordRelationship(new_word_id, relatedWordId);
 END;
 $$;
+
+
+CREATE OR REPLACE FUNCTION addTranslation(word_a VARCHAR, language_a VARCHAR, word_b VARCHAR, language_b VARCHAR)
+RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+    id_a INTEGER;
+    id_b INTEGER;
+BEGIN
+    -- Agregar o asegurarse de que ambas palabras existan en la tabla Words
+    PERFORM addWord(word_a, language_a);
+    PERFORM addWord(word_b, language_b);
+
+    -- Obtener los ID para ambas palabras
+    SELECT id INTO id_a FROM Words WHERE word = word_a AND language = language_a;
+    SELECT id INTO id_b FROM Words WHERE word = word_b AND language = language_b;
+
+    -- Agregar una relación entre las palabras
+    PERFORM addWordRelationship(id_a, id_b);
+END;
+$$;
+
+
 
 
 -- Creación de la función addError
