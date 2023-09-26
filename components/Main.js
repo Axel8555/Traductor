@@ -19,6 +19,7 @@ function Main({ searchTerm, onSearchTermChange }) {
       })
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         setResponse(data);
         setIsFetching(false); // Finaliza la solicitud
         // Restablece errorResponse y translationResponse
@@ -107,7 +108,7 @@ function Main({ searchTerm, onSearchTermChange }) {
         Traducción en-US:
         <div className='inputTextContainer'>
           <input type="text" name="word_b" />
-          <button type="submit">Enviar</button>
+          <button type="submit">Agregar</button>
         </div>
       </label>
     </form>
@@ -130,6 +131,7 @@ function Main({ searchTerm, onSearchTermChange }) {
       );
     } else if (response?.type) {
       switch (response.type) {
+        case 'both':
         case 'common_error':
         case 'levenshtein_error':
           return (
