@@ -28,10 +28,10 @@ body {
 
 main {
   display: flex!important;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  flex-wrap: nowrap;
 }
-
 button {
   margin: 0.5rem;
   background-color: #3483d3!important;
@@ -40,21 +40,29 @@ button {
   padding: 0.5rem;
 }
 
-.header {
+header {
   display: flex;
   justify-content: center;
   padding: 1rem;
   background-color: #1F2937;
 }
+form {
+  display: inline-block;
+}
 
-.searchContainer {
+.genericContainer {
+  margin: 10px;
+}
+
+
+.inputTextContainer {
   display: flex;
   align-items: center;
   border: 2px solid #CBD5E1;
   border-radius: 0.75rem;
 }
 
-.searchInput {
+.inputTextContainer input[type="text"] {
   background-color: transparent;
   border: 0;
   padding: 0 0.5rem;
@@ -64,4 +72,8 @@ button {
 
 .searchButton {
   background-color: #34D399!important;
+}
+
+.suggestionButton {
+  background-color: #eea76c!important;
 }

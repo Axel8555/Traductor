@@ -10,8 +10,8 @@ function Header({ onSearchTermChange }) {
   };
 
   return (
-    <header className="header">
-      <div className="searchContainer">
+    <header>
+      <div className="inputTextContainer">
         <input
           type="text"
           placeholder="Buscar..."
@@ -22,7 +22,6 @@ function Header({ onSearchTermChange }) {
               handleSearch();
             }
           }}
-          className="searchInput"
         />
         <button onClick={handleSearch} className="searchButton">
           Traducir
