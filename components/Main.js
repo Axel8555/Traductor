@@ -134,7 +134,12 @@ function Main({ searchTerm, onSearchTermChange }) {
         <div>
           <h2>Palabras encontradas:</h2>
           {response.words.map((element, index) => (
-            <p key={index}>{JSON.stringify(element)}</p>
+            <div key={index}>
+              <h3>Palabra principal:</h3>
+              <p>{JSON.stringify(element.mainword)}</p>
+              <h3>Traducciones:</h3>
+              <p>{JSON.stringify(element.translations)}</p>
+            </div>
           ))}
         </div>
       );
