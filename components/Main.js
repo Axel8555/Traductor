@@ -122,9 +122,15 @@ function Main({ searchTerm, onSearchTermChange }) {
           {response.words.map((element, index) => (
             <div key={index}>
               <h3>Palabra principal:</h3>
-              <p>{JSON.stringify(element.mainword)}</p>
+              <h2>{element.mainword.language}</h2>
+              <h1>{element.mainword.word}</h1>
               <h3>Traducciones:</h3>
-              <p>{JSON.stringify(element.translations)}</p>
+              {element.translations.map((translation, indexT) => (
+                <div key={indexT}>
+                  <h2>{translation.language}</h2>
+                  <h1>{translation.word}</h1>
+                </div>
+              ))}
             </div>
           ))}
         </div>
